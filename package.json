@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel ./src --out-dir ./dist",
+    "start": "node dist/server.js",
+    "debug": "npm run dev -- --inspect",
+    "dev": "NODE_ENV=development nodemon --exec babel-node src/server.js",
+    "test": "jest --runInBand",
+    "test:watch": "npm test -- --watch",
+    "test:coverage": "npm test -- --coverage"
   },
   "keywords": [],
   "author": "",
