@@ -112,4 +112,28 @@ describe('User', () => {
       });
     });
   });
+
+  describe('scopes', () => {
+    let user;
+
+    beforeEach(async () => {
+      user = await TestsHelpers.createNewUser();
+    });
+
+    describe('defaultScope', () => {
+      it('should return a user without a password', async () => {
+        const { User } = models;
+        const userFound = await User.findByPk(user.id);
+        expect(userFound.password).toBeUndefined();
+      });
+    });
+
+    describe('withPassword', () => {
+      it('should return a user with the password', async () => {
+        const { User } = models;
+        const userFound = await User.scope('withPassword').findByPk(user.id);
+        expect(userFound.password).toEqual(expect.any(String));
+      });
+    });
+  });
 });
