@@ -23,7 +23,7 @@ router.post(
     if (!savedToken || !savedToken.token) {
       return res
         .status(401)
-        .savedToken({ success: false, message: 'You must log in first' });
+        .send({ success: false, message: 'You must log in first' });
     }
 
     const payload = { email };

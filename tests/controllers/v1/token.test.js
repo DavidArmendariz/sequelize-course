@@ -69,4 +69,32 @@ describe('register', () => {
       expect(response.body.message).toEqual('test error');
     });
   });
+
+  it('should get a new access token successfully', async () => {
+    const refreshToken = newUserResponse.body.data.refreshToken;
+    const response = await request(app)
+      .post('/v1/token')
+      .set('Authorization', `Bearer ${refreshToken}`)
+      .send()
+      .expect(200);
+    expect(response.body.success).toEqual(true);
+    expect(response.body.data).toEqual({ accessToken: expect.any(String) });
+  });
+
+  it('should return 401 if there is no saved refresh token for the user', async () => {
+    const { RefreshToken } = models;
+    const refreshToken = newUserResponse.body.data.refreshToken;
+    const savedRefreshToken = await RefreshToken.findOne({
+      where: { token: refreshToken },
+    });
+    savedRefreshToken.token = null;
+    await savedRefreshToken.save();
+    const response = await request(app)
+      .post('/v1/token')
+      .set('Authorization', `Bearer ${refreshToken}`)
+      .send()
+      .expect(401);
+    expect(response.body.success).toEqual(false);
+    expect(response.body.message).toEqual('You must log in first');
+  });
 });
