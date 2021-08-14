@@ -51,6 +51,65 @@ describe('User', () => {
         ).sort();
         expect(savedRoles).toEqual(data.roles.sort());
       });
+
+      it('should error if we create a new user with an invalid email', async () => {
+        const { User } = models;
+        const data = {
+          email: 'test',
+          password: 'Test123#',
+        };
+        let error;
+        try {
+          await User.createNewUser(data);
+        } catch (err) {
+          error = err;
+        }
+        expect(error).toBeDefined();
+        expect(error.errors.length).toEqual(1);
+        const errorObj = error.errors[0];
+        expect(errorObj.message).toEqual('Not a valid email address');
+        expect(errorObj.path).toEqual('email');
+      });
+
+      it('should error if we do not pass an email', async () => {
+        const { User } = models;
+        const data = {
+          password: 'Test123#',
+        };
+        let error;
+        try {
+          await User.createNewUser(data);
+        } catch (err) {
+          error = err;
+        }
+        expect(error).toBeDefined();
+        expect(error.errors.length).toEqual(1);
+        const errorObj = error.errors[0];
+        expect(errorObj.message).toEqual('Email is required');
+        expect(errorObj.path).toEqual('email');
+      });
+
+      it('should error if we create a new user with an invalid username', async () => {
+        const { User } = models;
+        const data = {
+          email: 'test@example.com',
+          password: 'Test123#',
+          username: 'u',
+        };
+        let error;
+        try {
+          await User.createNewUser(data);
+        } catch (err) {
+          error = err;
+        }
+        expect(error).toBeDefined();
+        expect(error.errors.length).toEqual(1);
+        const errorObj = error.errors[0];
+        expect(errorObj.message).toEqual(
+          'Username must contain between 2 and 50 characters'
+        );
+        expect(errorObj.path).toEqual('username');
+      });
     });
   });
 });

@@ -55,6 +55,9 @@ export default (sequelize) => {
           isEmail: {
             msg: 'Not a valid email address',
           },
+          notNull: {
+            msg: 'Email is required',
+          },
         },
       },
       password: {
