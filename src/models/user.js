@@ -110,8 +110,10 @@ export default (sequelize) => {
   };
 
   User.beforeSave(async (user, options) => {
-    const hashedPassword = await User.hashPassword(user.password);
-    user.password = hashedPassword;
+    if (user.password) {
+      const hashedPassword = await User.hashPassword(user.password);
+      user.password = hashedPassword;
+    }
   });
 
   User.afterCreate((user, options) => {
